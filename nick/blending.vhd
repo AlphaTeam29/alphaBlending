@@ -11,16 +11,16 @@ entity blending is
 	Port (
 		nRESET	: IN STD_LOGIC; --not sure if reset is needed
 		CLOCK		: IN STD_LOGIC;
-		OUT_RED		: OUT	STD_LOGIC_VECTOR(3 downto 0);
-		OUT_GREEN		: OUT	STD_LOGIC_VECTOR(3 downto 0);
-		OUT_BLUE 		: OUT STD_LOGIC_VECTOR(3 downto 0);
-		R_1		: IN STD_LOGIC_VECTOR(3 downto 0);
-		G_1		: IN STD_LOGIC_VECTOR(3 downto 0);
-		B_1		: IN STD_LOGIC_VECTOR(3 downto 0);
-		R_2		: IN STD_LOGIC_VECTOR(3 downto 0);
-		G_2		: IN STD_LOGIC_VECTOR(3 downto 0);
-		B_2		: IN STD_LOGIC_VECTOR(3 downto 0);
-		ALPHA_V	:  IN STD_LOGIC_VECTOR(3 downto 0) --alpha values can hold values from 0-15
+		OUT_RED		: OUT	STD_LOGIC_VECTOR(7 downto 0);
+		OUT_GREEN		: OUT	STD_LOGIC_VECTOR(7 downto 0);
+		OUT_BLUE 		: OUT STD_LOGIC_VECTOR(7 downto 0);
+		R_1		: IN STD_LOGIC_VECTOR(7 downto 0);
+		G_1		: IN STD_LOGIC_VECTOR(7 downto 0);
+		B_1		: IN STD_LOGIC_VECTOR(7 downto 0);
+		R_2		: IN STD_LOGIC_VECTOR(7 downto 0);
+		G_2		: IN STD_LOGIC_VECTOR(7 downto 0);
+		B_2		: IN STD_LOGIC_VECTOR(7 downto 0);
+		ALPHA_V	:  IN STD_LOGIC_VECTOR(7 downto 0) --alpha values can hold values from 0-15
 		);
 end entity blending;
 
@@ -31,16 +31,16 @@ architecture rtl of blending is
 	--ports
 	signal sigp_nreset : STD_LOGIC;
 	signal sigp_clock : STD_LOGIC;
-	signal	sigp_out_red			:	STD_LOGIC_VECTOR(3 downto 0);
-	signal	sigp_out_green			:	STD_LOGIC_VECTOR(3 downto 0);
-	signal	sigp_out_blue		:	STD_LOGIC_VECTOR(3 downto 0);
-	signal sigp_r_1			: STD_LOGIC_VECTOR(3 downto 0);
-	signal sigp_g_1			: STD_LOGIC_VECTOR(3 downto 0);
-	signal sigp_b_1			: STD_LOGIC_VECTOR(3 downto 0);
-	signal sigp_r_2			: STD_LOGIC_VECTOR(3 downto 0);
-	signal sigp_g_2			: STD_LOGIC_VECTOR(3 downto 0);
-	signal sigp_b_2			: STD_LOGIC_VECTOR(3 downto 0);
-	signal sigp_alpha_v			: STD_LOGIC_VECTOR(3 downto 0);
+	signal	sigp_out_red			:	STD_LOGIC_VECTOR(7 downto 0);
+	signal	sigp_out_green			:	STD_LOGIC_VECTOR(7 downto 0);
+	signal	sigp_out_blue		:	STD_LOGIC_VECTOR(7 downto 0);
+	signal sigp_r_1			: STD_LOGIC_VECTOR(7 downto 0);
+	signal sigp_g_1			: STD_LOGIC_VECTOR(7 downto 0);
+	signal sigp_b_1			: STD_LOGIC_VECTOR(7 downto 0);
+	signal sigp_r_2			: STD_LOGIC_VECTOR(7 downto 0);
+	signal sigp_g_2			: STD_LOGIC_VECTOR(7 downto 0);
+	signal sigp_b_2			: STD_LOGIC_VECTOR(7 downto 0);
+	signal sigp_alpha_v			: STD_LOGIC_VECTOR(7 downto 0);
 
 begin
 
@@ -70,7 +70,7 @@ begin
 		--out = (a *inA + inB*n - a*inB ) / n , where a alpha blending value = a/n , this helps with integer division
 		elsif (rising_edge(sigp_clock)) then --temp change input values	
 
-		sigp_out_red <= Std_logic_vector( To_unsigned(  
+				sigp_out_red <= Std_logic_vector( To_unsigned(  
 													(
 													
 													(
@@ -81,7 +81,7 @@ begin
 													(
 													To_integer(Unsigned(sigp_r_2))
 													*
-													16
+													256
 													)
 													-
 													(
@@ -90,8 +90,8 @@ begin
 													)
 													)
 													/
-													16
-													,4));
+													256
+													,8));
 													
 		--out = a*inA + (1-a) * inB  , where 0<a<1 , this is hard with decimals n stuff
 		--out = (a *inA + inB*n - a*inB ) / n , where a alpha blending value = a/n , this helps with integer division
@@ -106,7 +106,7 @@ begin
 													(
 													To_integer(Unsigned(sigp_g_2))
 													*
-													16
+													256
 													)
 													-
 													(
@@ -115,8 +115,8 @@ begin
 													)
 													)
 													/
-													16
-													,4));
+													256
+													,8));
 
 														--out = a*inA + (1-a) * inB  , where 0<a<1 , this is hard with decimals n stuff
 		--out = (a *inA + inB*n - a*inB ) / n , where a alpha blending value = a/n , this helps with integer division
@@ -131,7 +131,7 @@ begin
 													(
 													To_integer(Unsigned(sigp_b_2))
 													*
-													16
+													256
 													)
 													-
 													(
@@ -140,10 +140,8 @@ begin
 													)
 													)
 													/
-													16
-													,4));
-
-
+													256
+													,8));
 --		if sigp_r_1 = "1111" then
 --			sigp_r_1 <= (others => '0');
 --		elsif sigp_r_2 = "1111" then
@@ -168,7 +166,8 @@ begin
 		
 end process clock_div;
 
-	
+
+
 	
 end rtl;
 	

@@ -11,9 +11,12 @@ entity displayController is
 	Port (
 		--clock 1000hz
 		CLOCK		: IN STD_LOGIC;
-		RED		: OUT	STD_LOGIC;
-		GREEN		: OUT	STD_LOGIC;
-		BLUE 		: OUT STD_LOGIC;
+		OUT_RED		: OUT	STD_LOGIC_VECTOR(7 downto 0);
+		OUT_GREEN		: OUT	STD_LOGIC_VECTOR(7 downto 0);
+		OUT_BLUE 		: OUT STD_LOGIC_VECTOR(7 downto 0);
+		IN_RED		: IN	STD_LOGIC_VECTOR(7 downto 0);
+		IN_GREEN		: IN	STD_LOGIC_VECTOR(7 downto 0);
+		IN_BLUE 		: IN STD_LOGIC_VECTOR(7 downto 0);
 		D_ENABLE : OUT STD_LOGIC;
 		nRESET	: IN STD_LOGIC;
 		H_SYNC	:	OUT STD_LOGIC;
@@ -47,9 +50,12 @@ architecture rtl of displayController is
 	
 	--ports
 	signal sigp_clock : STD_LOGIC;
-	signal	sigp_red			:	STD_LOGIC;
-	signal	sigp_green			:	STD_LOGIC;
-	signal	sigp_blue		:	STD_LOGIC;
+	signal	sigp_out_red			:	STD_LOGIC_VECTOR(7 downto 0);
+	signal	sigp_out_green			:	STD_LOGIC_VECTOR(7 downto 0);
+	signal	sigp_out_blue		:	STD_LOGIC_VECTOR(7 downto 0);
+	signal	sigp_in_red			:	STD_LOGIC_VECTOR(7 downto 0);
+	signal	sigp_in_green			:	STD_LOGIC_VECTOR(7 downto 0);
+	signal	sigp_in_blue		:	STD_LOGIC_VECTOR(7 downto 0);
 	signal sigp_nreset 		:	STD_LOGIC;
 	signal	sigp_hsync		:	STD_LOGIC;
 	signal sigp_vsync 		:	STD_LOGIC;	
@@ -60,9 +66,12 @@ begin
 	--port assignments
 	sigp_nreset <= nRESET;
 	sigp_clock <= CLOCK;
-	RED <= sigp_red;
-	GREEN <= sigp_green;
-	BLUE <= sigp_blue;
+	OUT_RED <= sigp_out_red;
+	OUT_GREEN <= sigp_out_green;
+	OUT_BLUE <= sigp_out_blue;
+	sigp_in_red <= IN_RED;
+	sigp_in_blue <= IN_BLUE;
+	sigp_in_green <= IN_GREEN;
 	H_SYNC <= sigp_hsync;
 	V_SYNC <= sigp_vsync;
 	D_ENABLE <= sigp_d_enable;
@@ -95,9 +104,9 @@ end process clock_div;
 
 sigp_d_enable <= '1' when (sig_hcounter <= const_hdv_end) and (sig_vcounter <= const_vdv_end) else '0';
 
-sigp_red <= '1' when sigp_d_enable = '1' else '0';
-sigp_blue <= '1' when sigp_d_enable = '1' else '0';
-sigp_green <= '1' when sigp_d_enable = '1' else '0';
+sigp_out_red <= sigp_in_red when sigp_d_enable = '1' else "00000000";
+sigp_out_blue <= sigp_in_blue when sigp_d_enable = '1' else "00000000";
+sigp_out_green <= sigp_in_green when sigp_d_enable = '1' else "00000000";
 
 sigp_hsync <= '0' when (sig_hcounter > const_hfp_end) and (sig_hcounter <= const_hsync_end) else '1';
 sigp_vsync <= '0' when (sig_vcounter > const_vfp_end) and (sig_vcounter <= const_vsync_end) else '1';
